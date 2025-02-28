@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chemistry & Physics Quiz</title>
+  <style>
+body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: white;
+      text-align: center;
+    }
+    .question-box {
+      background-color: #1c1c1c;
+      padding: 20px;
+      margin: 20px auto;
+      border-radius: 10px;
+      width: 80%;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #ff8c00;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      margin: 5px;
+      transition: background-color 0.3s;
+    }
+    .btn:hover, .btn.selected {
+      background-color: #ffbf00;
+    }
+    .score {
+      font-size: 24px;
+      color: #ffcc00;
+    }
+    #question-number {
+      color: #00ccff;
+    }
+    .footer {
+      background-color: #1c1c1c;
+      color: #ff8c00;
+      padding: 10px;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+    .timer {
+      font-size: 20px;
+      color: #ff8c00;
+    }
+    .calculator-icon {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      font-size: 24px;
+      background-color: #ff8c00;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 140, 0, 0.7);
+      z-index: 1000;
+    }
+    .calculator {
+      position: fixed;
+      bottom: -300px;
+      left: 0;
+      right: 0;
+      background-color: #1c1c1c;
+      padding: 20px;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -2px 10px rgba(0, 255, 255, 0.7);
+      transition: bottom 0.3s ease-in-out;
+    }
+    .calculator.visible {
+      bottom: 0;
+    }
+    .calculator input {
+      width: 80%;
+      padding: 10px;
+      font-size: 20px;
+      margin-bottom: 10px;
+      border: 2px solid #00ccff;
+      border-radius: 5px;
+      text-align: right;
+      color: black;
+    }
+    .calculator .btn {
+      width: 20%;
+      margin: 5px;
+      font-size: 18px;
+    }
+    .review-section {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #1c1c1c;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+      color: white;
+    }
+    .review-question {
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #333;
+      border-radius: 5px;
+    }
+    .correct-answer {
+      color: #00ff00;
+    }
+    .selected-answer {
+      color: #ff0000;
+    }
+    .review-btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #00ccff;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .home-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      color: #ff8c00;
+      cursor: pointer;
+      z-index: 999;
+    }
+    .home-icon:hover {
+      color: #ffbf00;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chemistry & Physics Quiz</h1>
+  
+  <div class="home-icon" onclick="window.location.href='index.html'">&#127968;</div>
+  
+  <div class="timer" id="timer-display">Time remaining: 60:00</div>
+  <div id="quiz-container" class="question-box">
+    <div id="question-number"></div>
+    <div id="question-text"></div>
+    <div id="options-container">
+      <button id="option-A" class="btn" onclick="handleAnswer('A')"></button>
+      <button id="option-B" class="btn" onclick="handleAnswer('B')"></button>
+      <button id="option-C" class="btn" onclick="handleAnswer('C')"></button>
+      <button id="option-D" class="btn" onclick="handleAnswer('D')"></button>
+    </div>
+    <br>
+    <button id="next-btn" class="btn" onclick="nextQuestion()">Next</button>
+    <button id="prev-btn" class="btn" onclick="prevQuestion()" style="display:none;">Previous</button>
+    <button id="submit-btn" class="btn" onclick="submitQuiz()">Submit</button>
+  </div>
+
+  <div class="review-section" id="review-section" style="display:none;">
+    <h2>Review Your Answers</h2>
+    <div id="review-questions"></div>
+    <button class="review-btn" onclick="checkReview()">Check Review</button>
+  </div>
+
+  <div class="calculator" id="calculator">
+    <button class="btn" onclick="toggleCalculator()">×÷=+</button>
+    <input type="text" id="calc-display" disabled>
+    <div>
+      <button class="btn" onclick="appendCalcValue('7')">7</button>
+      <button class="btn" onclick="appendCalcValue('8')">8</button>
+      <button class="btn" onclick="appendCalcValue('9')">9</button>
+      <button class="btn" onclick="appendCalcValue('/')">÷</button>
+    </div>
+    <div>
+      <button class="btn" onclick="appendCalcValue('4')">4</button>
+      <button class="btn" onclick="appendCalcValue('5')">5</button>
+      <button class="btn" onclick="appendCalcValue('6')">6</button>
+      <button class="btn" onclick="appendCalcValue('*')">×</button>
+    </div>
+    <div>
+      <button class="btn" onclick="appendCalcValue('1')">1</button>
+      <button class="btn" onclick="appendCalcValue('2')">2</button>
+      <button class="btn" onclick="appendCalcValue('3')">3</button>
+      <button class="btn" onclick="appendCalcValue('-')">−</button>
+    </div>
+    <div>
+      <button class="btn" onclick="appendCalcValue('0')">0</button>
+      <button class="btn" onclick="appendCalcValue('.')">.</button>
+      <button class="btn" onclick="calculate()">=</button>
+      <button class="btn" onclick="appendCalcValue('+')">+</button>
+    </div>
+    <button class="btn" style="width: 90%;" onclick="clearCalc()">Clear</button>
+  </div>
+
+  <div class="footer">
+    &COPY; VOLTAGE QUIZ 2025. ALL RIGHTS RESERVED
+  </div>
+
+  <script>
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let selectedAnswers = [];
+    let questions = [];
+    let timer;
+    let timeRemaining = 3600; // 60 minutes
+    let calculatorVisible = false;
+
+    async function loadQuestions() {
+      try {
+        const response = await fetch('chemistry.json');
+        const allQuestions = await response.json();
+
+        // Shuffle and select 60 questions
+        questions = allQuestions.sort(() => Math.random() - 0.5).slice(0, 60);
+        selectedAnswers = Array(questions.length).fill(null); // Initialize selected answers
+        displayQuestion();
+        startTimer();
+      } catch (error) {
+        console.error('Error loading questions:', error);
+        alert('Failed to load questions. Please try again later.');
+      }
+    }
+
+    function displayQuestion() {
+      const question = questions[currentQuestionIndex];
+      document.getElementById("question-number").textContent = `Question ${currentQuestionIndex + 1}`;
+      document.getElementById("question-text").textContent = question.question;
+
+      // Set option text
+      for (const option of ["A", "B", "C", "D"]) {
+        const btn = document.getElementById(`option-${option}`);
+        btn.textContent = question.options[option];
+        btn.classList.remove("selected"); // Reset selected class
+        if (selectedAnswers[currentQuestionIndex] === option) {
+          btn.classList.add("selected"); // Highlight selected option
+        }
+      }
+
+      // Toggle navigation buttons
+      document.getElementById("prev-btn").style.display = currentQuestionIndex === 0 ? "none" : "inline-block";
+      document.getElementById("next-btn").style.display = currentQuestionIndex === questions.length - 1 ? "none" : "inline-block";
+    }
+
+    function handleAnswer(option) {
+      selectedAnswers[currentQuestionIndex] = option;
+      displayQuestion();
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        displayQuestion();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        displayQuestion();
+      }
+    }
+
+    function submitQuiz() {
+      clearInterval(timer); // Stop timer
+      calculateScore();
+    }
+
+    function calculateScore() {
+      score = selectedAnswers.filter((answer, index) => answer === questions[index].correct).length;
+      const percentage = Math.round((score / questions.length) * 100);
+
+      const message = percentage > 89
+        ? 'Excellent 💝'
+        : percentage > 50
+        ? 'Good ✅'
+        : 'Poor performance. Better luck next time!';
+      alert(message);
+
+      document.getElementById('review-section').style.display = 'block';
+      displayReview();
+    }
+
+    function displayReview() {
+      const reviewContainer = document.getElementById('review-questions');
+      reviewContainer.innerHTML = '';
+      questions.forEach((question, index) => {
+        const isCorrect = selectedAnswers[index] === question.correct;
+        reviewContainer.innerHTML += `
+          <div class="review-question">
+            <strong>Q${index + 1}: ${question.question}</strong>
+            <p>Options: A) ${question.options.A}, B) ${question.options.B}, C) ${question.options.C}, D) ${question.options.D}</p>
+            <p class="${isCorrect ? 'correct-answer' : 'selected-answer'}">
+              Your Answer: ${selectedAnswers[index] || 'No Answer'}
+            </p>
+            <p class="correct-answer">Correct Answer: ${question.correct}</p>
+          </div>
+        `;
+      });
+    }
+
+    function startTimer() {
+      timer = setInterval(() => {
+        if (timeRemaining <= 0) {
+          clearInterval(timer);
+          submitQuiz();
+        } else {
+          timeRemaining--;
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeRemaining / 60);
+      const seconds = timeRemaining % 60;
+      const timerDisplay = document.getElementById('timer-display');
+      timerDisplay.textContent = `Time remaining: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+      if (timeRemaining <= 300) {
+        timerDisplay.style.color = '#ff0000'; // Warn user in the last 5 minutes
+      }
+    }
+
+    function toggleCalculator() {
+      calculatorVisible = !calculatorVisible;
+      document.getElementById('calculator').classList.toggle('visible', calculatorVisible);
+    }
+
+    function appendCalcValue(value) {
+      const calcDisplay = document.getElementById('calc-display');
+      calcDisplay.value += value;
+    }
+
+    function calculate() {
+      try {
+        const calcDisplay = document.getElementById('calc-display');
+        calcDisplay.value = eval(calcDisplay.value);
+      } catch {
+        document.getElementById('calc-display').value = 'Error';
+      }
+    }
+
+    function clearCalc() {
+      document.getElementById('calc-display').value = '';
+    }
+
+    window.onload = loadQuestions;
+  </script>
+</body>
+</html>
