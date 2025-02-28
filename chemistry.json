@@ -1,0 +1,31 @@
+
+  {
+    "text": "What is the chemical symbol for water?",
+    "options": {
+      "A": "H2O",
+      "B": "CO2",
+      "C": "O2",
+      "D": "H2"
+    },
+    "correctAnswer": "A"
+  },
+  {
+    "text": "What is the atomic number of helium?",
+    "options": {
+      "A": "1",
+      "B": "2",
+      "C": "3",
+      "D": "4"
+    },
+    "correctAnswer": "B"
+  },
+  {
+    "text": "Which element is known as the 'King of Chemicals'?",
+    "options": {
+      "A": "Sulfur",
+      "B": "Oxygen",
+      "C": "Hydrogen",
+      "D": "Carbon"
+    },
+    "correctAnswer": "C"
+  }
